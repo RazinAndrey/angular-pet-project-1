@@ -1,14 +1,27 @@
-<div class="flex justify-center flex-col p-4">
-  <h1 class="font-bold mb-2 text-center">{{title | titlecase }}</h1>
+<app-global-error></app-global-error>
 
-  <!-- <app-product [product]="products[0]"></app-product>
-  <app-product [product]="products[1]"></app-product> -->
+<div class="flex justify-center flex-col p-4 ">
+
+  <h1 class="font-bold mb-2 text-center">{{ title | titlecase }}</h1>
+
+  <input
+    type="text"
+    class="mb-2 border border-white py-2 px-4 w-full bg-gray-900 rounded outline-none"
+    placeholder="Filter product..."
+    [(ngModel)]="term"
+  >
 
   <p *ngIf="loading" class="text-center text-lg">Loading...</p>
 
-  <app-product 
-      *ngFor="let product of products; let i = index"
+  <div *ngIf="products$ | async as products">
+    <app-product 
+      *ngFor="let product of products | filterProducts: term; let i = index"
       [product]="product"
-  >
-  </app-product>
+    ></app-product>
+  </div>
+  
+  <app-modal title="Create new Product">
+    <app-create-product></app-create-product>
+  </app-modal>
+
 </div>

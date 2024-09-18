@@ -9,7 +9,9 @@ import { IProduct } from "../../models/products";
   templateUrl: './product.component.html',
 })
 export class ProductComponent {
+
   @Input() product: IProduct
 
   details = false; 
+
 }

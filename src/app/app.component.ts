@@ -4,11 +4,17 @@ import { CommonModule } from '@angular/common';
 import { ProductsService } from './services/products.service';
 import { IProduct } from './models/products';
 import { ProductComponent } from './components/product/product.component';
+import { Observable, tap } from 'rxjs';
+import { GlobalErrorComponent } from "./components/global-error/global-error.component";
+import { FormsModule } from '@angular/forms';
+import { FilterProducts } from './pipes/filter-products.pipe';
+import { ModalComponent } from "./components/modal/modal.component";
+import { CreateProductComponent } from "./components/create-product/create-product.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, ProductComponent],
+  imports: [RouterOutlet, CommonModule, ProductComponent, GlobalErrorComponent, FormsModule, FilterProducts, ModalComponent, CreateProductComponent],
   templateUrl: './app.component.html',
 })
 
@@ -16,7 +22,9 @@ export class AppComponent implements OnInit{
 
   title = 'pet project №1';
 
-  products: IProduct[] = [];
+  term = '';
+
+  products$: Observable<IProduct[]>
 
   loading = false;
 
@@ -24,9 +32,8 @@ export class AppComponent implements OnInit{
 
   ngOnInit(): void {
     this.loading = true;
-    this.productService.getAll().subscribe(products => {
-      this.products = products;
-      this.loading = false;
-    })
+
+    this.products$ = this.productService.getAll()
+      .pipe(tap(() => this.loading = false))
   }
 }

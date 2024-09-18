@@ -1,7 +1,8 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { delay, Observable } from 'rxjs';
+import { catchError, delay, Observable, retry, throwError } from 'rxjs';
 import { IProduct } from '../models/products';
+import { ErrorService } from './error.service';
 
 
 @Injectable({
@@ -10,7 +11,10 @@ import { IProduct } from '../models/products';
 
 export class ProductsService {
   
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient, 
+    private errorService: ErrorService,
+  ) {}
 
   baseUrl = 'https://fakestoreapi.com/';
 
@@ -20,7 +24,14 @@ export class ProductsService {
         fromObject: {limit: 5}
       })
     }).pipe(
-      delay(5000)
+      delay(200),
+      retry(2),
+      catchError(this.errorHandler.bind(this))
     );
+  }
+
+  private errorHandler(error: HttpErrorResponse){
+    this.errorService.handle(error.message);
+    return throwError(() => error.message);
   }
 }

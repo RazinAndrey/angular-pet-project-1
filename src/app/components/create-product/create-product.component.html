@@ -13,10 +13,12 @@
     </p>
 
 
-    <button type="submit"
-        class="mb-2 border border-white py-2 px-4 w-full bg-gray-900 rounded"
+    <button type="submit" [disabled]="form.invalid"
+        class="mb-2 border border-white py-2 px-4 w-full bg-gray-900 rounded btn-submit"
     >
         Create
     </button>
-
+    <style>
+        .btn-submit:disabled{ opacity: 0.8; cursor: not-allowed;}
+    </style>
 </form>

@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, delay, Observable, retry, throwError } from 'rxjs';
+import { catchError, delay, Observable, retry, tap, throwError } from 'rxjs';
 import { IProduct } from '../models/products';
 import { ErrorService } from './error.service';
 
@@ -18,16 +18,26 @@ export class ProductsService {
 
   baseUrl = 'https://fakestoreapi.com/';
 
+  products: IProduct[] = [];
+
   getAll(): Observable<IProduct[]>{
     return this.http.get<IProduct[]>(`${this.baseUrl}products`, {
       params: new HttpParams({
         fromObject: {limit: 5}
       })
     }).pipe(
-      delay(200),
+      delay(1000),
       retry(2),
+      tap(products => this.products = products),
       catchError(this.errorHandler.bind(this))
     );
+  }
+
+  create(product: IProduct): Observable<IProduct>{
+    return this.http.post<IProduct>(`${this.baseUrl}products`, product)
+      .pipe(
+        tap(prod => this.products.push(prod)),
+        catchError(this.errorHandler.bind(this)));
   }
 
   private errorHandler(error: HttpErrorResponse){

@@ -8,6 +8,7 @@ import { IProduct } from '../models/products';
 export class FilterProducts implements PipeTransform {
 
   transform(products: IProduct[], search: string): IProduct[] {
+    if(!search.length) return products;
     return products.filter(p => p.title.toLowerCase().includes(search.toLocaleLowerCase()));
   }
 
